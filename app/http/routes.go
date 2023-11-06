@@ -98,7 +98,8 @@ func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 			return NewResponse(request, body, HttpStatusInternalServerError)
 		}
 
-		response = NewResponse(request, "", HttpStatusCreated)
+		body := string(request.Body)
+		response = NewResponse(request, body, HttpStatusCreated)
 	} else {
 		body := "Method Not Allowed"
 		response = NewResponse(request, body, HttpStatusInternalServerError)
