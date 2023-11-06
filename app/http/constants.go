@@ -6,6 +6,7 @@ const (
 	HttpStatusOK                  = 200
 	HttpStatusCreated             = 201
 	HttpStatusNotFound            = 404
+	HttpStatusMethodNotAllowed    = 405
 	HttpStatusInternalServerError = 500
 	ContentLength                 = "Content-Length"
 	ContentType                   = "Content-Type"

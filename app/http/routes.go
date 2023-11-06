@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -86,15 +87,10 @@ func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 		response = NewResponse(request, body, HttpStatusOK)
 		response.Headers[ContentType] = ContentTypeApplicationStream
 	} else if handler.Method == "POST" {
-		file, err := os.Create(path)
+		fmt.Println("Creating file:", path)
+		err := os.WriteFile(path, request.Body, 0555)
 		if err != nil {
 			body := "Error creating file"
-			return NewResponse(request, body, HttpStatusInternalServerError)
-		}
-
-		_, err = file.Write(request.Body)
-		if err != nil {
-			body := "Error writing to file"
 			return NewResponse(request, body, HttpStatusInternalServerError)
 		}
 
@@ -102,7 +98,7 @@ func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 		response = NewResponse(request, body, HttpStatusCreated)
 	} else {
 		body := "Method Not Allowed"
-		response = NewResponse(request, body, HttpStatusInternalServerError)
+		response = NewResponse(request, body, HttpStatusMethodNotAllowed)
 	}
 
 	return response
