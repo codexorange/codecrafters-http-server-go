@@ -40,7 +40,7 @@ func (response *HttpResponse) WriteResponse(conn net.Conn) {
 	var out strings.Builder
 	out.WriteString(response.StatusLine + CRLF)
 	for header, value := range response.Headers {
-		out.WriteString(header + ": " + value + ";" + CRLF)
+		out.WriteString(header + ": " + value + CRLF)
 	}
 	out.WriteString(CRLF)
 	out.Write(response.Body)
