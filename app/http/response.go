@@ -23,10 +23,16 @@ func NewResponse(request *HttpRequest, statusCode int) *HttpResponse {
 	response.StatusCode = statusCode
 	response.StatusLine = HttpStatusLines[statusCode]
 	response.Headers = make(map[string]string)
+	response.Headers["Content-Type"] = "text/plain"
 
 	if strings.Contains(request.Path, "/echo/") {
 		body := strings.Replace(request.Path, "/echo/", "", 1)
-		response.Headers["Content-Type"] = "text/plain"
+		response.Headers["Content-Length"] = fmt.Sprintf("%d", len(body))
+		response.Body = []byte(body)
+	}
+
+	if strings.Contains(request.Path, "/user-agent") {
+		body := request.Headers["User-Agent"]
 		response.Headers["Content-Length"] = fmt.Sprintf("%d", len(body))
 		response.Body = []byte(body)
 	}
