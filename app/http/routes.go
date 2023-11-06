@@ -1,8 +1,10 @@
 package http
 
 import (
+	"flag"
 	"io"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -52,14 +54,18 @@ func (handler NotFoundHandler) Handle(request *HttpRequest) *HttpResponse {
 
 func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 	filename := strings.Replace(request.Path, "/files/", "", 1)
+	dir := flag.String("directory", ".", "Directory to serve")
+	flag.Parse()
 
-	_, err := os.Stat(filename)
+	path := path.Join(*dir, filename)
+
+	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		body := "File Not Found"
 		return NewResponse(request, body, HttpStatusNotFound)
 	}
 
-	file, err := os.Open(filename)
+	file, err := os.Open(path)
 	if err != nil {
 		body := "Error opening file"
 		return NewResponse(request, body, HttpStatusInternalServerError)
