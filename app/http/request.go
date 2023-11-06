@@ -43,6 +43,10 @@ func ParseHttpRequest(request []byte) *HttpRequest {
 		}
 	}
 
+	if lines[len(lines)-1] != "" {
+		httpRequest.Body = []byte(lines[len(lines)-1])
+	}
+
 	return httpRequest
 }
 

@@ -8,9 +8,10 @@ import (
 
 var HttpStatusLines = map[int]string{
 	HttpStatusOK:                  "HTTP/1.1 200 OK",
-	HttpStatusNotFound:            "HTTP/1.1 404 Not Found",
-	HttpStatusInternalServerError: "HTTP/1.1 500 Internal Server Error",
 	HttpStatusCreated:             "HTTP/1.1 201 Created",
+	HttpStatusNotFound:            "HTTP/1.1 404 Not Found",
+	HttpStatusMethodNotAllowed:    "HTTP/1.1 405 Method Not Allowed",
+	HttpStatusInternalServerError: "HTTP/1.1 500 Internal Server Error",
 }
 
 type HttpResponse struct {

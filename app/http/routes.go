@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path"
@@ -87,7 +86,6 @@ func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 		response = NewResponse(request, body, HttpStatusOK)
 		response.Headers[ContentType] = ContentTypeApplicationStream
 	} else if handler.Method == "POST" {
-		fmt.Println("Creating file:", path)
 		err := os.WriteFile(path, request.Body, 0555)
 		if err != nil {
 			body := "Error creating file"
