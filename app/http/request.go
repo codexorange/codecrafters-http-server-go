@@ -13,11 +13,11 @@ type HttpRequest struct {
 	Body    []byte
 }
 
-func HandleRequest(request []byte) *HttpResponse {
+func HandleRequest(request []byte, dir string) *HttpResponse {
 	httpRequest := ParseHttpRequest(request)
 	statusCode := ValidatePath(httpRequest.Path)
 
-	return HandleRoute(httpRequest, statusCode)
+	return HandleRoute(httpRequest, statusCode, dir)
 }
 
 func ParseHttpRequest(request []byte) *HttpRequest {

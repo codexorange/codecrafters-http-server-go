@@ -1,7 +1,6 @@
 package http
 
 import (
-	"flag"
 	"io"
 	"os"
 	"path"
@@ -16,9 +15,11 @@ type EchoHandler struct{}
 type RootHandler struct{}
 type UserAgentHandler struct{}
 type NotFoundHandler struct{}
-type FileHandler struct{}
+type FileHandler struct {
+	Dir string
+}
 
-func HandleRoute(request *HttpRequest, statusCode int) *HttpResponse {
+func HandleRoute(request *HttpRequest, statusCode int, dir string) *HttpResponse {
 	if request.Path == "/" {
 		return RootHandler{}.Handle(request)
 	} else if strings.Contains(request.Path, "/echo/") {
@@ -26,7 +27,9 @@ func HandleRoute(request *HttpRequest, statusCode int) *HttpResponse {
 	} else if request.Path == "/user-agent" {
 		return UserAgentHandler{}.Handle(request)
 	} else if strings.Contains(request.Path, "/files/") {
-		return FileHandler{}.Handle(request)
+		return (&FileHandler{
+			Dir: dir,
+		}).Handle(request)
 	} else {
 		return NotFoundHandler{}.Handle(request)
 	}
@@ -54,10 +57,7 @@ func (handler NotFoundHandler) Handle(request *HttpRequest) *HttpResponse {
 
 func (handler FileHandler) Handle(request *HttpRequest) *HttpResponse {
 	filename := strings.Replace(request.Path, "/files/", "", 1)
-	dir := flag.String("directory", ".", "Directory to serve")
-	flag.Parse()
-
-	path := path.Join(*dir, filename)
+	path := path.Join(handler.Dir, filename)
 
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {

@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-func ServeHTTP(conn net.Conn) {
+func ServeHTTP(conn net.Conn, dir string) {
 	defer conn.Close()
 
 	buf := make([]byte, 1024)
@@ -15,6 +15,6 @@ func ServeHTTP(conn net.Conn) {
 		return
 	}
 
-	response := HandleRequest(buf[:n])
+	response := HandleRequest(buf[:n], dir)
 	response.WriteResponse(conn)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -9,6 +10,9 @@ import (
 )
 
 func main() {
+	dir := flag.String("directory", ".", "Directory to serve")
+	flag.Parse()
+
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
 		fmt.Println("Failed to bind to port 4221")
@@ -23,6 +27,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		go http.ServeHTTP(conn)
+		go http.ServeHTTP(conn, *dir)
 	}
 }
