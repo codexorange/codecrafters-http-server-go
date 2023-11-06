@@ -1,7 +1,7 @@
 package http
 
 import (
-	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -14,12 +14,8 @@ type HttpRequest struct {
 }
 
 func HandleRequest(request []byte) *HttpResponse {
-	var statusCode int = HttpStatusOK
 	httpRequest := ParseHttpRequest(request)
-
-	if !strings.Contains(AllowedPaths, httpRequest.Path) {
-		statusCode = HttpStatusNotFound
-	}
+	statusCode := ValidatePath(httpRequest.Path)
 
 	return NewResponse(httpRequest, statusCode)
 }
@@ -47,6 +43,14 @@ func ParseHttpRequest(request []byte) *HttpRequest {
 		}
 	}
 
-	fmt.Println(httpRequest)
 	return httpRequest
+}
+
+func ValidatePath(path string) int {
+	validPathRegex := regexp.MustCompile(AllowedPaths)
+	if validPathRegex.MatchString(path) {
+		return HttpStatusOK
+	} else {
+		return HttpStatusNotFound
+	}
 }

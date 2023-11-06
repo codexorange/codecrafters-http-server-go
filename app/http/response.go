@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"net"
+	"strings"
 )
 
 var HttpStatusLines = map[int]string{
@@ -23,14 +24,28 @@ func NewResponse(request *HttpRequest, statusCode int) *HttpResponse {
 	response.StatusLine = HttpStatusLines[statusCode]
 	response.Headers = make(map[string]string)
 
+	if strings.Contains(request.Path, "/echo/") {
+		body := strings.Replace(request.Path, "/echo/", "", 1)
+		response.Headers["Content-Type"] = "text/plain"
+		response.Headers["Content-Length"] = fmt.Sprintf("%d", len(body))
+		response.Body = []byte(body)
+	}
+
 	return response
 }
 
 func (response *HttpResponse) WriteResponse(conn net.Conn) {
-	fmt.Println("Writing response to socket")
 	defer conn.Close()
 
-	_, err := conn.Write([]byte(response.StatusLine + CRLF + CRLF))
+	var out strings.Builder
+	out.WriteString(response.StatusLine + CRLF)
+	for header, value := range response.Headers {
+		out.WriteString(header + ": " + value + ";" + CRLF)
+	}
+	out.WriteString(CRLF)
+	out.Write(response.Body)
+
+	_, err := conn.Write([]byte(out.String()))
 	if err != nil {
 		fmt.Println("Failed to write to socket:", err)
 		return

@@ -1,7 +1,7 @@
 package http
 
 const (
-	AllowedPaths       = "/"
+	AllowedPaths       = `^/echo/.*$|^/$`
 	CRLF               = "\r\n"
 	HttpStatusOK       = 200
 	HttpStatusNotFound = 404
