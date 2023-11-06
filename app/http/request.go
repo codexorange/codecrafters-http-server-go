@@ -17,7 +17,7 @@ func HandleRequest(request []byte) *HttpResponse {
 	httpRequest := ParseHttpRequest(request)
 	statusCode := ValidatePath(httpRequest.Path)
 
-	return NewResponse(httpRequest, statusCode)
+	return HandleRoute(httpRequest, statusCode)
 }
 
 func ParseHttpRequest(request []byte) *HttpRequest {

@@ -7,8 +7,9 @@ import (
 )
 
 var HttpStatusLines = map[int]string{
-	200: "HTTP/1.1 200 OK",
-	404: "HTTP/1.1 404 Not Found",
+	HttpStatusOK:                  "HTTP/1.1 200 OK",
+	HttpStatusNotFound:            "HTTP/1.1 404 Not Found",
+	HttpStatusInternalServerError: "HTTP/1.1 500 Internal Server Error",
 }
 
 type HttpResponse struct {
@@ -18,22 +19,16 @@ type HttpResponse struct {
 	Body       []byte
 }
 
-func NewResponse(request *HttpRequest, statusCode int) *HttpResponse {
-	var response *HttpResponse = &HttpResponse{}
-	response.StatusCode = statusCode
-	response.StatusLine = HttpStatusLines[statusCode]
-	response.Headers = make(map[string]string)
-	response.Headers["Content-Type"] = "text/plain"
-
-	if strings.Contains(request.Path, "/echo/") {
-		body := strings.Replace(request.Path, "/echo/", "", 1)
-		response.Headers["Content-Length"] = fmt.Sprintf("%d", len(body))
-		response.Body = []byte(body)
+func NewResponse(request *HttpRequest, body string, statusCode int) *HttpResponse {
+	var response *HttpResponse = &HttpResponse{
+		StatusCode: statusCode,
+		StatusLine: HttpStatusLines[statusCode],
+		Headers:    make(map[string]string),
 	}
 
-	if strings.Contains(request.Path, "/user-agent") {
-		body := request.Headers["User-Agent"]
-		response.Headers["Content-Length"] = fmt.Sprintf("%d", len(body))
+	response.Headers[ContentType] = ContentTypeText
+	if body != "" {
+		response.Headers[ContentLength] = fmt.Sprintf("%d", len(body))
 		response.Body = []byte(body)
 	}
 
